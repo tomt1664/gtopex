@@ -1,0 +1,33 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/qt4logo.png</file>
+        <file>icons/zoomin.png</file>
+        <file>icons/zoomout.png</file>
+        <file>icons/rotateleft.png</file>
+        <file>icons/rotateright.png</file>
+        <file>icons/fileprint.png</file>
+        <file>icons/close_32.png</file>
+        <file>icons/save_32.png</file>
+        <file>icons/rotl_32.png</file>
+        <file>icons/rotr_32.png</file>
+        <file>icons/open_32.png</file>
+        <file>icons/plus_32.png</file>
+        <file>icons/minus_32.png</file>
+        <file>icons/run_32.png</file>
+        <file>icons/move_32.png</file>
+        <file>icons/list_32.png</file>
+        <file>icons/camera_32.png</file>
+        <file>icons/picture_32.png</file>
+        <file>icons/wrench_32.png</file>
+        <file>icons/info_32.png</file>
+        <file>icons/point_32.png</file>
+        <file>icons/reset_32.png</file>
+        <file>icons/bondr_32.png</file>
+        <file>icons/strain_32.png</file>
+        <file>icons/bondrot_32.png</file>
+        <file>icons/delete_32.png</file>
+        <file>icons/create_32.png</file>
+        <file>icons/graph_32.png</file>
+        <file>icons/compr_32.png</file>
+    </qresource>
+</RCC>

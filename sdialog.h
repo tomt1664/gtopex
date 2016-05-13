@@ -11,6 +11,11 @@ class SettingsDialog : public QDialog   //relaxation parameters dialog box
 
 public:
     SettingsDialog(QVector<float>& pot, QVector<float>& apot, float step, QVector<float>& bounds, int nstep);
+    void getpots(QVector<float>& pot);
+    void getapots(QVector<float>& apot);
+    void getbounds(QVector<float>& bounds);
+    float getstep() { return m_step; }
+    int getnstep() { return m_nstep; }
 
 private slots:
     void okButtonPress();

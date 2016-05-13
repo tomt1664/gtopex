@@ -6,6 +6,10 @@
 
 SettingsDialog::SettingsDialog(QVector<float>& pot, QVector<float>& apot, float step, QVector<float>& bounds, int nstep)
 {
+    m_pot = pot;
+    m_apot = apot;
+    m_bounds = bounds;
+
     QGroupBox *morseGroup = new QGroupBox(tr("Morse potential parameters"));
 
     QLabel *morseDLabel = new QLabel(tr("D:"));
@@ -136,14 +140,41 @@ SettingsDialog::SettingsDialog(QVector<float>& pot, QVector<float>& apot, float 
 
 void SettingsDialog::okButtonPress()
 {
+    m_pot[0] = morseDEdit->text().toDouble();
+    m_pot[1] = morseaEdit->text().toDouble();
+    m_pot[2] = morserEdit->text().toDouble();
+    m_pot[3] = cutoffEdit->text().toDouble();
+
+    m_apot[0] = angletEdit->text().toDouble();
+    m_apot[1] = angleVEdit->text().toDouble();
+
+    m_step = stepEdit->text().toDouble();
+    m_nstep = nstepEdit->text().toInt();
+
+    m_bounds[0] = xminEdit->text().toDouble();
+    m_bounds[1] = xmaxEdit->text().toDouble();
+    m_bounds[2] = yminEdit->text().toDouble();
+    m_bounds[3] = ymaxEdit->text().toDouble();
 
     close();
 }
 
 void SettingsDialog::cancelButtonPress()
 {
-
     close();
 }
 
+void SettingsDialog::getpots(QVector<float> &pot)
+{
+    pot = m_pot;
+}
 
+void SettingsDialog::getapots(QVector<float> &apot)
+{
+    apot = m_apot;
+}
+
+void SettingsDialog::getbounds(QVector<float> &bounds)
+{
+    bounds = m_bounds;
+}

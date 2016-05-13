@@ -613,15 +613,12 @@ void MainWindow::settings()
     SettingsDialog  setdialog(pot,apot,step,bounds,nstep);
     setdialog.exec();
 
-    //pots (temp)
-    pot.append(5.7);
-    pot.append(1.96);
-    pot.append(1.42);
-    pot.append(1.90);
-
-    apot.append(2.0944);
-    apot.append(500.00);
-
+    //get the settings dialog values
+    setdialog.getpots(pot);
+    setdialog.getapots(apot);
+    setdialog.getbounds(bounds);
+    step = setdialog.getstep();
+    nstep = setdialog.getnstep();
 }
 
 void MainWindow::dostrain()

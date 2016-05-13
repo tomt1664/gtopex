@@ -137,7 +137,6 @@ void Atom::getnlist(QVector<float>& potin,QVector<float>& apotin)
               nn3 = atcnt;
             }
         }
-
     }
     nlist.append(nn1);
     nlist.append(nn2);

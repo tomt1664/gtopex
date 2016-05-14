@@ -60,6 +60,10 @@ public:
     void getnlist(QVector<float>& potin,QVector<float>& apotin); //determine the neighbour list for the atom and initialise potentials
     void atomForces(float step); //calculate total force on atom due to neighbours and integrate translation
 
+
+    void tensors(QVector<float>& xtensor,QVector<float>& ytensor,QVector<float>& voltensor,float bondl); //atomistic tensor calculation
+
+
     enum { Type = UserType + 1 };
     int type() const Q_DECL_OVERRIDE { return Type; }
 

@@ -586,9 +586,6 @@ void MainWindow::print()
 void MainWindow::runSystem()
 {
 
-//    for(int icount = 0; icount < 20; icount++)
-//    {
-
     //get atom list
     int natopt = 0;
     QList<Atom *> atoms;
@@ -648,6 +645,59 @@ void MainWindow::settings()
 
 void MainWindow::dostrain()
 {
+    QVector<float> xtensor;
+    QVector<float> ytensor;
+    QVector<float> voltensor;
+
+
+    //open dialog box to select options and color pallete
+
+
+
+
+
+
+
+
+
+    //get atom list
+    int natopt = 0;
+    QList<Atom *> atoms;
+    foreach (QGraphicsItem *item, scene->items()) {
+        if (Atom *atom = qgraphicsitem_cast<Atom *>(item))
+        {
+            atoms << atom;
+            natopt++;
+        }
+    }
+
+    //get nearest neighbour list for each atom
+    natopt = 0;
+    foreach (Atom *atom, atoms)
+    {
+        atom->getnlist(pot,apot);
+        natopt++;
+    }
+
+
+
+
+
+
+
+    //calculate strain tensors
+    foreach (Atom *atom, atoms)
+    {
+        atom->tensors(xtensor,ytensor,voltensor);
+        natopt++;
+    }
+
+
+
+    //do coloring
+
+
+
 
     int icnt = 0;
     foreach (QGraphicsItem *item, scene->items()) {
@@ -666,10 +716,15 @@ void MainWindow::dostrain()
 
 }
 
+
+
 void MainWindow::drawcharts()
 {
 
 }
+
+
+
 
 void MainWindow::zoomIn(int level)
 {

@@ -299,6 +299,18 @@ bool Atom::advance()
 }
 
 
+
+//function to calculate the x,y and volumetric components of the 2D atomistic strain tensor based on the 3 nearest neighbours
+void Atom::tensors(QVector<float>& xtensor,QVector<float>& ytensor,QVector<float>& voltensor,float bondl);
+{
+
+}
+
+
+
+
+
+
 QRectF Atom::boundingRect() const
 {
     return QRectF(-50, -50, 100, 100);

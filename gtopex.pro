@@ -3,11 +3,13 @@ RESOURCES += images.qrc
 HEADERS += mainwindow.h atom.h \
     bond.h \
     cdialog.h \
-    sdialog.h
+    sdialog.h \
+    tdialog.h
 SOURCES += main.cpp \
     bond.cpp \
     cdialog.cpp \
-    sdialog.cpp
+    sdialog.cpp \
+    tdialog.cpp
 SOURCES += mainwindow.cpp atom.cpp
 
 QT += widgets

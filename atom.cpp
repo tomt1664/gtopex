@@ -83,6 +83,11 @@ void Atom::removeBonds()
     }
 }
 
+void Atom::changeColor(QColor& color)
+{
+    this->color = color;
+}
+
 //function to find the three nearest neighbour atoms and stores the index in nlist
 //currently uses a full loop - consider using a link cell list to improve speed
 //
@@ -271,12 +276,11 @@ void Atom::atomForces(float step)
         xfrc -= xag1 + xag2; //add to angle force to vector
         yfrc -= yag1 + yag2;
 
-//        qDebug() << " angle3 " << ang << " frc " << xag1 + xag2 << " " << yag1 + yag2;
     }
 
 
     //stop movement if forces very small
-if (qAbs(xfrc) < 0.03 && qAbs(yfrc) < 0.03)
+if (qAbs(xfrc) < 0.07 && qAbs(yfrc) < 0.07)
     xfrc = yfrc = 0;
 
     newPos = pos() + QPointF(xfrc, yfrc);

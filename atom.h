@@ -55,6 +55,8 @@ public:
     void removeBond(Bond *bond);
     void removeBonds(); //remove bonds after atom deletion
 
+    void changeColor(QColor &color); //change the atom color
+
     void getnlist(QVector<float>& potin,QVector<float>& apotin); //determine the neighbour list for the atom and initialise potentials
     void atomForces(float step); //calculate total force on atom due to neighbours and integrate translation
 

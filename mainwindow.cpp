@@ -243,6 +243,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(createButton, SIGNAL(clicked()), this, SLOT(createConfig()));
     connect(runButton, SIGNAL(clicked()), this, SLOT(runSystem()));
     connect(paramButton, SIGNAL(clicked()), this, SLOT(settings()));
+    connect(strainButton, SIGNAL(clicked()), this, SLOT(dostrain()));
 
     setupMatrix();
 
@@ -397,10 +398,36 @@ void MainWindow::togglePMode()
     gView->setInteractive(selectMButton->isChecked());
 }
 
+
+
+
+
 void MainWindow::bondrotate()
 {
 
+    foreach (QGraphicsItem *item, scene->selectedItems()) {
+        if (item->type() == Bond::Type) {
+            scene->removeItem(item);
+            Bond *bond = qgraphicsitem_cast<Bond *>(item);
+            bond->sourceAtom()->removeBond(bond);
+            bond->destAtom()->removeBond(bond);
+            delete item;
+        }
+    }
+
+    foreach (QGraphicsItem *item, scene->selectedItems()) {
+         if (item->type() == Atom::Type)
+             qgraphicsitem_cast<Atom *>(item)->removeBonds();
+         scene->removeItem(item);
+         delete item;
+         nitems--;
+    }
+
+
 }
+
+
+
 
 void MainWindow::deleteatom()
 {
@@ -581,31 +608,29 @@ void MainWindow::runSystem()
         natopt++;
     }
 
-    for(int icount = 0; icount < 20; icount++)
+    for(int icount = 0; icount < nstep; icount++)
     {
-    //do forces and steepest descent step
-    natopt = 0;
-    foreach (Atom *atom, atoms)
-    {
-        natopt++;
-        atom->atomForces(step);
+        //do forces and steepest descent step
+        natopt = 0;
+        foreach (Atom *atom, atoms)
+        {
+            natopt++;
+            atom->atomForces(step);
 
+        }
+
+        //exit iteration loop if movement stops
+        int itemmoved = 0;
+        foreach (Atom *atom, atoms)
+        {
+            if(atom->advance()) itemmoved = 1;
+        }
+
+        if (!itemmoved) {
+            return;
+        }
+        qDebug() << " iter " << icount;
     }
-
-//    bool itemsMoved = false;
-
-    foreach (Atom *atom, atoms) atom->advance();
-
-    qDebug() << "iter " << icount;
-    }
-
-
-
-//            itemsMoved = true;
-//    }
-
-//    }
-
 }
 
 void MainWindow::settings()
@@ -623,6 +648,21 @@ void MainWindow::settings()
 
 void MainWindow::dostrain()
 {
+
+    int icnt = 0;
+    foreach (QGraphicsItem *item, scene->items()) {
+
+        QColor color(icnt*8,0,255-icnt*8,255);
+
+        Atom *atom = qgraphicsitem_cast<Atom *>(item);
+        if (!atom) continue;
+        icnt++;
+
+        qDebug() << icnt << " " << atom;
+        atom->changeColor(color);
+        scene->update();
+
+    }
 
 }
 

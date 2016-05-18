@@ -24,6 +24,7 @@ RotateDialog::RotateDialog()
 
     connect(angleDial, SIGNAL(valueChanged(int)), angleSpinBox, SLOT(setValue(int)));
     connect(angleSpinBox, SIGNAL(valueChanged(int)),angleDial, SLOT(setValue(int)));
+    connect(angleDial, SIGNAL(valueChanged(int)), this, SIGNAL(valueChanged(int)));
     connect(okButton, SIGNAL(clicked()), this, SLOT(okButtonPress()));
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
@@ -34,10 +35,11 @@ RotateDialog::RotateDialog()
 
     angleSpinBox->setValue(0);
 
-    setWindowTitle(tr("Rotate Group"));
+    setWindowTitle(tr("Rotate"));
 }
 
 void RotateDialog::okButtonPress()
 {
+    m_ang = angleSpinBox->text().toDouble();
     close();
 }

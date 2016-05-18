@@ -404,51 +404,50 @@ void MainWindow::togglePMode()
 
 
 
-
+//function to call the rotate group dialog and then perform the rotation
 void MainWindow::bondrotate()
 {
-    RotateDialog rotdialog;
-    rotdialog.exec();
+    RotateDialog *rotdialog = new RotateDialog;
+    xcom = 0;
+    ycom = 0;
+    int nselect = 0;
+    rcounter = 0;
 
-
-/*
-    foreach (QGraphicsItem *item, scene->items()) {
+    //get all selected atom positions and the C-O-M
+    foreach (QGraphicsItem *item, scene->selectedItems()) {
         Atom *atom = qgraphicsitem_cast<Atom *>(item);
         if (!atom) continue;
-        QPointF vec = atom->pos();
-        float xout = vec.x()/100.0;
-        float yout = vec.y()/100.0;
-        out << "C  " << xout << " " << yout << " 0.0\n";
+        QPointF apos = atom->pos();
+        nselect++;
+        xcom += apos.x();
+        ycom += apos.y();
     }
-*/
+    xcom = xcom/(nselect*1.0);
+    ycom = ycom/(nselect*1.0);
 
-
-
-
-
-/*
-    foreach (QGraphicsItem *item, scene->selectedItems()) {
-        if (item->type() == Bond::Type) {
-            scene->removeItem(item);
-            Bond *bond = qgraphicsitem_cast<Bond *>(item);
-            bond->sourceAtom()->removeBond(bond);
-            bond->destAtom()->removeBond(bond);
-            delete item;
-        }
-    }
-
-    foreach (QGraphicsItem *item, scene->selectedItems()) {
-         if (item->type() == Atom::Type)
-             qgraphicsitem_cast<Atom *>(item)->removeBonds();
-         scene->removeItem(item);
-         delete item;
-         nitems--;
-    }
-*/
+    //connect the rotate dialog to the direct rotate function for real time response
+    connect(rotdialog, SIGNAL(valueChanged(int)),this, SLOT(rotatevalue(int)));
+    rotdialog->exec();
 
 }
 
+void MainWindow::rotatevalue(int ang)
+{
+    float angle = (ang-rcounter)*3.14159/180.0;
+    float cosang = qCos(-angle);
+    float sinang = qSin(-angle);
 
+    //rotate the selected positions about the COM
+    foreach (QGraphicsItem *item, scene->selectedItems()) {
+        Atom *atom = qgraphicsitem_cast<Atom *>(item);
+        if (!atom) continue;
+        QPointF apos = atom->pos();
+        float xrot = cosang*(apos.x()-xcom) + sinang*(apos.y()-ycom);
+        float yrot = cosang*(apos.y()-ycom) - sinang*(apos.x()-xcom);
+        atom->setPos(xrot+xcom,yrot+ycom);
+    }
+    rcounter = ang;
+}
 
 //function to delete selected atoms from the scene
 void MainWindow::deleteatom()
@@ -692,8 +691,8 @@ void MainWindow::dostrain()
 
 
 
-
 /*
+
 
 
     //get atom list
@@ -749,8 +748,8 @@ void MainWindow::dostrain()
         scene->update();
 
     }
+*/
 
-    */
 }
 
 

@@ -66,6 +66,7 @@ private slots:
     void setupMatrix();
     void togglePMode();
     void bondrotate();
+    void rotatevalue(int ang);
     void deleteatom();
     void openfile();
     void savefile();
@@ -94,6 +95,8 @@ private:
     QVector<float> apot; //angle potential parameters
     float step; //steepest descent step size
     int nstep; //max number of optimisation steps
+    float xcom,ycom; //center of mass of group
+    int rcounter;
 
     QGraphicsView *gView;
     QLabel *label;

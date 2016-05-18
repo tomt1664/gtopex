@@ -1,34 +1,8 @@
 /****************************************************************************
+** Graphene Topology Explorer
 **
-** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
-**
-** This file is part of the demonstration applications of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:LGPL21$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 or version 3 as published by the Free
-** Software Foundation and appearing in the file LICENSE.LGPLv21 and
-** LICENSE.LGPLv3 included in the packaging of this file. Please review the
-** following information to ensure the GNU Lesser General Public License
-** requirements will be met: https://www.gnu.org/licenses/lgpl.html and
-** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** As a special exception, The Qt Company gives you certain additional
-** rights. These rights are described in The Qt Company LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** $QT_END_LICENSE$
-**
+** Tom Trevethan 2016
+** tptrevethan@googlemail.com
 ****************************************************************************/
 
 #include "atom.h"
@@ -298,19 +272,49 @@ bool Atom::advance()
     return true;
 }
 
-
-
-//function to calculate the x,y and volumetric components of the 2D atomistic strain tensor based on the 3 nearest neighbours
-void Atom::tensors(QVector<float>& otensor, float bondl, int tcomp)
+//function to calculate the atomistic strain based on the 3 nearest neighbour bond lengths
+void Atom::calcStrain(float bondl)
 {
+    double bondsum = 0.0;
+    int atcnt = 0;
+    int nbond = 0;
+
+    //loop over all atoms
+    foreach (QGraphicsItem *item, scene()->items()) {
+        Atom *atom = qgraphicsitem_cast<Atom *>(item);
+        atcnt++;
+        if (!atom)
+            continue;
+
+        //get nearest neighbour distances
+        if(atcnt == nlist[0] || atcnt == nlist[1] || atcnt == nlist[2])
+        {
+            //get interatomic separation
+            QPointF vec = mapToItem(atom, 0, 0);
+            qreal dx = vec.x();
+            qreal dy = vec.y();
+
+            qreal d = 0.01*qSqrt(dx*dx + dy*dy);
+
+            if(d < pot[3])
+            {
+                bondsum += d;
+                nbond++;
+            }
+        }
+    }
+
+    m_strain = 0.0;
+
+    //only calculate the bond strain if there are 3 bonds
+    if(nbond == 3)
+    {
+        m_strain = bondsum/(3*bondl) - 1;
+    }
 
 }
 
-
-
-
-
-
+//define atom bounding rect
 QRectF Atom::boundingRect() const
 {
     return QRectF(-50, -50, 100, 100);
@@ -323,6 +327,7 @@ QPainterPath Atom::shape() const
     return path;
 }
 
+//paint atom
 void Atom::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(widget);

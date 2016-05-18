@@ -1,21 +1,20 @@
+/****************************************************************************
+** Graphene Topology Explorer
+**
+** Tom Trevethan 2016
+** tptrevethan@googlemail.com
+****************************************************************************/
+
 #include <QtWidgets>
 
 #include <QDebug>
 
 #include "tdialog.h"
 
-//atomistic tensor color coding dialog box constructor
+//atomistic strain color coding dialog box constructor
 StrainColorDialog::StrainColorDialog()
 {
     m_cscale = 0;
-
-    QGroupBox *sselectGroup = new QGroupBox;
-    QLabel *sselectLabel = new QLabel(tr("Strain component"));
-    sselectComboBox = new QComboBox;
-    sselectComboBox->addItem(tr("x"), 1);
-    sselectComboBox->addItem(tr("y"), 2);
-    sselectComboBox->addItem(tr("Volumetric"), 3);
-    sselectComboBox->addItem(tr("Shear"), 4);
 
     QGroupBox *cscaleGroup = new QGroupBox(tr("Color Gradients"));
     QPixmap gsimage(":/icons/grayscale.png");
@@ -48,11 +47,6 @@ StrainColorDialog::StrainColorDialog()
     scolorButton = new QPushButton(tr("Apply"));
     cancelButton = new QPushButton(tr("Cancel"));
 
-    QGridLayout *sselectLayout = new QGridLayout;
-    sselectLayout->addWidget(sselectLabel,0,0);
-    sselectLayout->addWidget(sselectComboBox,0,1);
-    sselectGroup->setLayout(sselectLayout);
-
     QGridLayout *scaleLayout = new QGridLayout;
     scaleLayout->addWidget(greyscaleRadioButton, 0, 0, 1, 1);
     scaleLayout->addWidget(gsimageLabel, 0, 1, 1, 3);
@@ -75,8 +69,6 @@ StrainColorDialog::StrainColorDialog()
     buttonGroup->setLayout(buttonLayout);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(sselectGroup);
-    mainLayout->addSpacing(12);
     mainLayout->addWidget(cscaleGroup);
     mainLayout->addSpacing(12);
     mainLayout->addWidget(valuesGroup);
@@ -87,13 +79,11 @@ StrainColorDialog::StrainColorDialog()
     connect(scolorButton, SIGNAL(clicked()), this, SLOT(scolorButtonPress()));
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelButtonPress()));
 
-    setWindowTitle(tr("Atomistic strain tensors"));
+    setWindowTitle(tr("Atomistic strain mapping"));
 }
 
 void StrainColorDialog::scolorButtonPress()
 {
-    m_component = sselectComboBox->currentIndex();
-
     if(greyscaleRadioButton->isChecked())
     {
         m_cscale = 1;
@@ -105,13 +95,14 @@ void StrainColorDialog::scolorButtonPress()
         m_cscale = 3;
     }
 
-    m_mnv = minvalEdit->text().toDouble();
-    m_mxv = maxvalEdit->text().toDouble();
+    m_mnv = 0.01*minvalEdit->text().toDouble();
+    m_mxv = 0.01*maxvalEdit->text().toDouble();
 
     close();
 }
 
 void StrainColorDialog::cancelButtonPress()
 {
+    m_cscale = 0;
     close();
 }

@@ -1,3 +1,10 @@
+/****************************************************************************
+** Graphene Topology Explorer
+**
+** Tom Trevethan 2016
+** tptrevethan@googlemail.com
+****************************************************************************/
+
 #ifndef CDIALOG_H
 #define CDIALOG_H
 

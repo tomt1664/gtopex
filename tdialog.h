@@ -1,3 +1,10 @@
+/****************************************************************************
+** Graphene Topology Explorer
+**
+** Tom Trevethan 2016
+** tptrevethan@googlemail.com
+****************************************************************************/
+
 #ifndef TDIALOG_H
 #define TDIALOG_H
 
@@ -14,14 +21,12 @@ public:
     double maxval() {return m_mxv; }
     double minval() {return m_mnv; }
     int cscale() { return m_cscale; }
-    int scomp() { return m_component; }
 
 private slots:
     void scolorButtonPress();
     void cancelButtonPress();
 
 private:
-    QComboBox *sselectComboBox;
     QRadioButton *greyscaleRadioButton;
     QRadioButton *hotscaleRadioButton;
     QRadioButton *rainbowRadioButton;
@@ -33,7 +38,6 @@ private:
 
     double m_mnv, m_mxv; //minimum and maximum scale value
     int m_cscale; // color scale: 1 = greyscale, 2 = hot, 3 = rainbow, 4 = jet
-    int m_component; //the selected component of the strain tensor
 };
 
 #endif // TDIALOG_H

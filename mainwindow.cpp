@@ -1,34 +1,8 @@
 /****************************************************************************
+** Graphene Topology Explorer
 **
-** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
-**
-** This file is part of the demonstration applications of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:LGPL21$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 or version 3 as published by the Free
-** Software Foundation and appearing in the file LICENSE.LGPLv21 and
-** LICENSE.LGPLv3 included in the packaging of this file. Please review the
-** following information to ensure the GNU Lesser General Public License
-** requirements will be met: https://www.gnu.org/licenses/lgpl.html and
-** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** As a special exception, The Qt Company gives you certain additional
-** rights. These rights are described in The Qt Company LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** $QT_END_LICENSE$
-**
+** Tom Trevethan 2016
+** tptrevethan@googlemail.com
 ****************************************************************************/
 
 #include "atom.h"
@@ -654,7 +628,7 @@ void MainWindow::runSystem()
             progress.setValue(nstep);
             return;
         }
-//        qDebug() << " iter " << icount << " nstep " << nstep << " step " << step;
+
     }
     progress.setValue(nstep);
 }
@@ -678,22 +652,13 @@ void MainWindow::dostrain()
     StrainColorDialog scolordialog;
     scolordialog.exec();
 
-    int tcomp,cscl;
-
-    tcomp = scolordialog.scomp();
+    int cscl;
+    float mxv,mnv;
     cscl = scolordialog.cscale();
+    mnv = scolordialog.minval();
+    mxv = scolordialog.maxval();
 
-    QVector<float> otensor;
-
-    //open dialog box to select options and color pallete
-
-
-
-
-
-/*
-
-
+    if(cscl == 0) return;
 
     //get atom list
     int natopt = 0;
@@ -706,7 +671,7 @@ void MainWindow::dostrain()
         }
     }
 
-    //get nearest neighbour list for each atom
+    //set nearest neighbour list for each atom object
     natopt = 0;
     foreach (Atom *atom, atoms)
     {
@@ -714,41 +679,76 @@ void MainWindow::dostrain()
         natopt++;
     }
 
-
-
-
-
-
-
-    //calculate strain tensors
+    //calculate the atomistic strain for each atom
     foreach (Atom *atom, atoms)
     {
-        atom->tensors(otensor, bl, tcomp);
-        natopt++;
+        atom->calcStrain(pot[2]);
     }
 
-
-
     //do coloring
-
-
-
-
-    int icnt = 0;
     foreach (QGraphicsItem *item, scene->items()) {
-
-        QColor color(icnt*8,0,255-icnt*8,255);
 
         Atom *atom = qgraphicsitem_cast<Atom *>(item);
         if (!atom) continue;
-        icnt++;
+        double strn = atom->getStrain();
+        int red,green,blue;
 
-        qDebug() << icnt << " " << atom;
+        if(strn < mnv) strn = mnv;
+        if(strn > mxv) strn = mxv;
+
+        strn = (strn - mnv)/(mxv - mnv);
+
+        if(cscl == 1) //grayscale
+        {
+            red = strn*255;
+            green = red;
+            blue = red;
+        } else if(cscl == 2) //hot RGB scale
+        {
+            if(strn <= 0.3333)
+            {
+                red = strn*3.0*255;
+                green = 0.0;
+                blue = 0.0;
+            } else if(strn <= 0.6666)
+            {
+                red = 255;
+                green = (strn-0.3333)*3*255;
+                blue = 0.0;
+            } else
+            {
+                red = 255;
+                green = 255;
+                blue = (strn-0.6666)*3*255;
+            }
+
+        } else if(cscl == 3) //rainbow RGB scale
+        {
+            if(strn <= 0.50)
+            {
+                red = 255;
+                green = strn*2*255;
+                blue = 0.0;
+            } else if(strn <= 0.75)
+            {
+                red = (1-(strn-0.5)*4)*255;
+                green = 255;
+                blue = 0.0;
+            } else
+            {
+                red = 0;
+                green = (1-(strn-0.75)*4)*255;
+                blue = (strn-0.75)*4*255;
+            }
+        }
+
+        QColor color(red,green,blue,255);
+
         atom->changeColor(color);
         scene->update();
 
     }
-*/
+
 
 }
 

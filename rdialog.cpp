@@ -1,3 +1,10 @@
+/****************************************************************************
+** Graphene Topology Explorer
+**
+** Tom Trevethan 2016
+** tptrevethan@googlemail.com
+****************************************************************************/
+
 #include <QDial>
 #include <QtWidgets>
 #include <QDebug>

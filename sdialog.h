@@ -1,3 +1,10 @@
+/****************************************************************************
+** Graphene Topology Explorer
+**
+** Tom Trevethan 2016
+** tptrevethan@googlemail.com
+****************************************************************************/
+
 #ifndef SDIALOG_H
 #define SDIALOG_H
 

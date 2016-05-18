@@ -1,3 +1,10 @@
+/****************************************************************************
+** Graphene Topology Explorer
+**
+** Tom Trevethan 2016
+** tptrevethan@googlemail.com
+****************************************************************************/
+
 #ifndef BOND_H
 #define BOND_H
 
@@ -5,13 +12,12 @@
 
 class Atom;
 
-//! [0]
 class Bond : public QGraphicsItem
 {
 public:
-    Bond(Atom *sourceAtom, Atom *destAtom);
+    Bond(Atom *sourceAtom, Atom *destAtom); //bond constructor
 
-    Atom *sourceAtom() const;
+    Atom *sourceAtom() const; //return bond atoms
     Atom *destAtom() const;
 
     void adjust();

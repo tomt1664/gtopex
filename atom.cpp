@@ -301,7 +301,7 @@ bool Atom::advance()
 
 
 //function to calculate the x,y and volumetric components of the 2D atomistic strain tensor based on the 3 nearest neighbours
-void Atom::tensors(QVector<float>& xtensor,QVector<float>& ytensor,QVector<float>& voltensor,float bondl);
+void Atom::tensors(QVector<float>& otensor, float bondl, int tcomp)
 {
 
 }

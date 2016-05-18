@@ -4,12 +4,14 @@ HEADERS += mainwindow.h atom.h \
     bond.h \
     cdialog.h \
     sdialog.h \
-    tdialog.h
+    tdialog.h \
+    rdialog.h
 SOURCES += main.cpp \
     bond.cpp \
     cdialog.cpp \
     sdialog.cpp \
-    tdialog.cpp
+    tdialog.cpp \
+    rdialog.cpp
 SOURCES += mainwindow.cpp atom.cpp
 
 QT += widgets

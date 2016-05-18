@@ -18,5 +18,9 @@
         <file>icons/create_32.png</file>
         <file>icons/graph_32.png</file>
         <file>icons/compr_32.png</file>
+        <file>icons/index.png</file>
+        <file>icons/rainbowscale.png</file>
+        <file>icons/hotscale.png</file>
+        <file>icons/grayscale.png</file>
     </qresource>
 </RCC>

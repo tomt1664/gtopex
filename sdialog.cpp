@@ -44,7 +44,7 @@ SettingsDialog::SettingsDialog(QVector<float>& pot, QVector<float>& apot, float 
     QLabel *stepLabel = new QLabel(tr("Step:"));
     stepEdit = new QLineEdit;
     stepEdit->setText(QString::number(step));
-    stepEdit->setValidator(new QDoubleValidator(0.0,999.0, 2, stepEdit));
+    stepEdit->setValidator(new QDoubleValidator(0.0,999.0, 4, stepEdit));
 
     QLabel *nstepLabel = new QLabel(tr("Max steps:"));
     nstepEdit = new QLineEdit;
@@ -77,6 +77,8 @@ SettingsDialog::SettingsDialog(QVector<float>& pot, QVector<float>& apot, float 
     ymaxEdit = new QLineEdit;
     ymaxEdit->setText(QString::number(bounds[3]*0.01));
     ymaxEdit->setValidator(new QDoubleValidator(0.0,999.0, 2, ymaxEdit));
+
+    QGroupBox *buttonGroup = new QGroupBox;
 
     okButton = new QPushButton(tr("OK"));
     cancelButton = new QPushButton(tr("Cancel"));
@@ -117,6 +119,11 @@ SettingsDialog::SettingsDialog(QVector<float>& pot, QVector<float>& apot, float 
     boundsLayout->addWidget(ymaxEdit, 3, 1);
     boundsGroup->setLayout(boundsLayout);
 
+    QGridLayout *buttonLayout = new QGridLayout;
+    buttonLayout->addWidget(okButton, 0, 0);
+    buttonLayout->addWidget(cancelButton, 0, 1);
+    buttonGroup->setLayout(buttonLayout);
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(morseGroup);
     mainLayout->addSpacing(12);
@@ -126,10 +133,7 @@ SettingsDialog::SettingsDialog(QVector<float>& pot, QVector<float>& apot, float 
     mainLayout->addSpacing(12);
     mainLayout->addWidget(boundsGroup);
     mainLayout->addSpacing(12);
-    mainLayout->addWidget(okButton);
-    mainLayout->addSpacing(12);
-    mainLayout->addWidget(cancelButton);
-    //    mainLayout->addStretch(1);
+    mainLayout->addWidget(buttonGroup);
     setLayout(mainLayout);
 
     connect(okButton, SIGNAL(clicked()), this, SLOT(okButtonPress()));

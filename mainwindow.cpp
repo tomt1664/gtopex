@@ -35,10 +35,13 @@
 #include "bond.h"
 #include "cdialog.h"
 #include "sdialog.h"
+#include "tdialog.h"
+#include "rdialog.h"
 #include "mainwindow.h"
 
 #include <QDebug>
 
+#include <QProgressDialog>
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QTime>
@@ -230,7 +233,7 @@ MainWindow::MainWindow(QWidget *parent)
             this, SLOT(setResetButtonEnabled()));
     connect(selectMButton, SIGNAL(toggled(bool)), this, SLOT(togglePMode()));
     connect(dragMButton, SIGNAL(toggled(bool)), this, SLOT(togglePMode()));
-    connect(bondrotButton, SIGNAL(toggled(bool)), this, SLOT(bondrotate()));
+    connect(bondrotButton, SIGNAL(clicked()), this, SLOT(bondrotate()));
     connect(rotateleftButton, SIGNAL(clicked()), this, SLOT(rotateLeft()));
     connect(rotaterightButton, SIGNAL(clicked()), this, SLOT(rotateRight()));
     connect(zoominButton, SIGNAL(clicked()), this, SLOT(zoomIn()));
@@ -404,7 +407,26 @@ void MainWindow::togglePMode()
 
 void MainWindow::bondrotate()
 {
+    RotateDialog rotdialog;
+    rotdialog.exec();
 
+
+/*
+    foreach (QGraphicsItem *item, scene->items()) {
+        Atom *atom = qgraphicsitem_cast<Atom *>(item);
+        if (!atom) continue;
+        QPointF vec = atom->pos();
+        float xout = vec.x()/100.0;
+        float yout = vec.y()/100.0;
+        out << "C  " << xout << " " << yout << " 0.0\n";
+    }
+*/
+
+
+
+
+
+/*
     foreach (QGraphicsItem *item, scene->selectedItems()) {
         if (item->type() == Bond::Type) {
             scene->removeItem(item);
@@ -422,13 +444,13 @@ void MainWindow::bondrotate()
          delete item;
          nitems--;
     }
-
+*/
 
 }
 
 
 
-
+//function to delete selected atoms from the scene
 void MainWindow::deleteatom()
 {
     foreach (QGraphicsItem *item, scene->selectedItems()) {
@@ -453,7 +475,7 @@ void MainWindow::deleteatom()
 void MainWindow::slotAbout()
 {
     QMessageBox::about(this, tr("About "),
-            tr("<p><b>GTopEx version 0.1</b></p>"
+            tr("<p><b>GTopEx version 0.5</b></p>"
                "<p>Build date: %1"
                "<br> "
                "<br>This program is built using Qt 5.5"
@@ -585,6 +607,9 @@ void MainWindow::print()
 //relax the system based on simplified force-field
 void MainWindow::runSystem()
 {
+    //set-up progress dialog
+    QProgressDialog progress("Optimising...", "Cancel", 0, nstep, this);
+    progress.setWindowModality(Qt::WindowModal);
 
     //get atom list
     int natopt = 0;
@@ -616,6 +641,9 @@ void MainWindow::runSystem()
 
         }
 
+        progress.setValue(icount); //updtate progress bar
+        if(progress.wasCanceled()) break;
+
         //exit iteration loop if movement stops
         int itemmoved = 0;
         foreach (Atom *atom, atoms)
@@ -624,12 +652,15 @@ void MainWindow::runSystem()
         }
 
         if (!itemmoved) {
+            progress.setValue(nstep);
             return;
         }
-        qDebug() << " iter " << icount;
+//        qDebug() << " iter " << icount << " nstep " << nstep << " step " << step;
     }
+    progress.setValue(nstep);
 }
 
+//get the potentials and optimisation settings
 void MainWindow::settings()
 {
     SettingsDialog  setdialog(pot,apot,step,bounds,nstep);
@@ -645,10 +676,15 @@ void MainWindow::settings()
 
 void MainWindow::dostrain()
 {
-    QVector<float> xtensor;
-    QVector<float> ytensor;
-    QVector<float> voltensor;
+    StrainColorDialog scolordialog;
+    scolordialog.exec();
 
+    int tcomp,cscl;
+
+    tcomp = scolordialog.scomp();
+    cscl = scolordialog.cscale();
+
+    QVector<float> otensor;
 
     //open dialog box to select options and color pallete
 
@@ -657,7 +693,7 @@ void MainWindow::dostrain()
 
 
 
-
+/*
 
 
     //get atom list
@@ -688,7 +724,7 @@ void MainWindow::dostrain()
     //calculate strain tensors
     foreach (Atom *atom, atoms)
     {
-        atom->tensors(xtensor,ytensor,voltensor);
+        atom->tensors(otensor, bl, tcomp);
         natopt++;
     }
 
@@ -714,6 +750,7 @@ void MainWindow::dostrain()
 
     }
 
+    */
 }
 
 

@@ -53,6 +53,9 @@ private slots:
     void settings();
     void dostrain();
     void drawcharts();
+    void setcolor();
+    void findrings();
+    void plotrings(int nfold);
 
 private:
     void populateScene();
@@ -89,6 +92,8 @@ private:
     QToolButton *runButton;
     QToolButton *paramButton;
     QToolButton *chartButton;
+    QToolButton *colorButton;
+    QToolButton *ringsButton;
     QSlider *zoomSlider;
     QSlider *rotateSlider;
 };

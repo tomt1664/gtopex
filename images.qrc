@@ -22,5 +22,13 @@
         <file>icons/rainbowscale.png</file>
         <file>icons/hotscale.png</file>
         <file>icons/grayscale.png</file>
+        <file>icons/color_32.png</file>
+        <file>icons/rings_32.png</file>
+        <file>icons/p5_64.png</file>
+        <file>icons/p4_64.png</file>
+        <file>icons/p3_64.png</file>
+        <file>icons/p5_48.png</file>
+        <file>icons/p4_48.png</file>
+        <file>icons/p3_48.png</file>
     </qresource>
 </RCC>

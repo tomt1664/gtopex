@@ -11,11 +11,13 @@
 #include "sdialog.h"
 #include "tdialog.h"
 #include "rdialog.h"
+#include "pdialog.h"
 #include "mainwindow.h"
 
 #include <QDebug>
 
 #include <QProgressDialog>
+#include <QColorDialog>
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QTime>
@@ -169,6 +171,16 @@ MainWindow::MainWindow(QWidget *parent)
     chartButton->setIconSize(iconSize);
     chartButton->setToolTip("System analysis");
 
+    colorButton = new QToolButton;
+    colorButton->setIcon(QIcon(QPixmap(":/icons/color_32.png")));
+    colorButton->setIconSize(iconSize);
+    colorButton->setToolTip("Atom color");
+
+    ringsButton = new QToolButton;
+    ringsButton->setIcon(QIcon(QPixmap(":/icons/rings_32.png")));
+    ringsButton->setIconSize(iconSize);
+    ringsButton->setToolTip("Highlight rings");
+
     QButtonGroup *pointerMGroup = new QButtonGroup;
     pointerMGroup->setExclusive(true);
     pointerMGroup->addButton(selectMButton);
@@ -176,8 +188,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     labelLayout->addWidget(openButton);
     labelLayout->addWidget(saveButton);
-    labelLayout->addWidget(createButton);
     labelLayout->addWidget(printButton);
+    labelLayout->addWidget(colorButton);
+    labelLayout->addWidget(createButton);
     labelLayout->addStretch();
     labelLayout->addWidget(selectMButton);
     labelLayout->addWidget(dragMButton);
@@ -186,6 +199,7 @@ MainWindow::MainWindow(QWidget *parent)
     labelLayout->addStretch();
     labelLayout->addWidget(runButton);
     labelLayout->addWidget(strainButton);
+    labelLayout->addWidget(ringsButton);
     labelLayout->addWidget(chartButton);
     labelLayout->addWidget(paramButton);
     labelLayout->addWidget(infoButton);
@@ -221,6 +235,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(runButton, SIGNAL(clicked()), this, SLOT(runSystem()));
     connect(paramButton, SIGNAL(clicked()), this, SLOT(settings()));
     connect(strainButton, SIGNAL(clicked()), this, SLOT(dostrain()));
+    connect(colorButton, SIGNAL(clicked()), this, SLOT(setcolor()));
+    connect(ringsButton, SIGNAL(clicked()), this, SLOT(findrings()));
 
     setupMatrix();
 
@@ -317,7 +333,7 @@ void MainWindow::populateScene()  //function to draw the structure
     //draw atoms
     for(int i = 0; i < nitems; i++)
     {
-        QColor color(100,100,255,255);
+        QColor color(215,215,215,255);
         Atom *item = new Atom(color,this);
         item->setPos(QPointF(xatmpos[i], yatmpos[i]));
         scene->addItem(item);
@@ -374,8 +390,6 @@ void MainWindow::togglePMode()
                               : QGraphicsView::ScrollHandDrag);
     gView->setInteractive(selectMButton->isChecked());
 }
-
-
 
 
 //function to call the rotate group dialog and then perform the rotation
@@ -448,10 +462,10 @@ void MainWindow::deleteatom()
 void MainWindow::slotAbout()
 {
     QMessageBox::about(this, tr("About "),
-            tr("<p><b>GTopEx version 0.5</b></p>"
+            tr("<p><b>GTopEx version 0.65</b></p>"
                "<p>Build date: %1"
                "<br> "
-               "<br>This program is built using Qt 5.5"
+               "<br>This program is built using Qt 5.6"
                "<br> "
                "<br>Tom Trevethan"
                "<br>Email: <a href=\"mailto:tptrevethan@googlemail.com>\">tptrevethan@googlemail.com</a>"
@@ -575,6 +589,25 @@ void MainWindow::print()
         gView->render(&painter);
     }
 #endif
+}
+
+//function to set the atom color using qcolordialog
+void MainWindow::setcolor()
+{
+    QColor color = QColorDialog::getColor(Qt::green, this, "Select Color");
+
+    if( !color.isValid() ){
+       return;
+    }
+
+    //set the chosen color for all atoms
+    foreach (QGraphicsItem *item, scene->items()) {
+        Atom *atom = qgraphicsitem_cast<Atom *>(item);
+        if (!atom) continue;
+
+        atom->changeColor(color);
+        scene->update();
+    }
 }
 
 //relax the system based on simplified force-field
@@ -748,10 +781,41 @@ void MainWindow::dostrain()
         scene->update();
 
     }
+}
 
+//function to open find rings dialog box and find 3,4 or 5-fold rings and highlight them
+void MainWindow::findrings()
+{
+    PolyDialog *ringdialog = new PolyDialog;
+
+/*    xcom = 0;
+    ycom = 0;
+    int nselect = 0;
+    rcounter = 0;
+
+    //get all selected atom positions and the C-O-M
+    foreach (QGraphicsItem *item, scene->selectedItems()) {
+        Atom *atom = qgraphicsitem_cast<Atom *>(item);
+        if (!atom) continue;
+        QPointF apos = atom->pos();
+        nselect++;
+        xcom += apos.x();
+        ycom += apos.y();
+    }
+    xcom = xcom/(nselect*1.0);
+    ycom = ycom/(nselect*1.0);
+*/
+    //connect the rotate dialog to the direct rotate function for real time response
+    connect(ringdialog, SIGNAL(valueChanged(int)),this, SLOT(plotrings(int)));
+
+    ringdialog->exec();
 
 }
 
+void MainWindow::plotrings(int nfold)
+{
+    qDebug() << nfold;
+}
 
 
 void MainWindow::drawcharts()
@@ -781,5 +845,3 @@ void MainWindow::rotateRight()
 {
     rotateSlider->setValue(rotateSlider->value() + 10);
 }
-
-

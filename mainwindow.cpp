@@ -7,6 +7,7 @@
 
 #include "atom.h"
 #include "bond.h"
+#include "hlight.h"
 #include "cdialog.h"
 #include "sdialog.h"
 #include "tdialog.h"
@@ -814,7 +815,58 @@ void MainWindow::findrings()
 
 void MainWindow::plotrings(int nfold)
 {
+    //get atom list
+    int natopt = 0;
+    QList<Atom *> atoms;
+    foreach (QGraphicsItem *item, scene->items()) {
+        if (Atom *atom = qgraphicsitem_cast<Atom *>(item))
+        {
+            atoms << atom;
+            natopt++;
+        }
+    }
+
+
+
+
+/*
+    //set nearest neighbour list for each atom object
+    natopt = 0;
+    foreach (Atom *atom, atoms)
+    {
+        atom->getnlist(pot,apot);
+        natopt++;
+    }
+
+    //calculate the atomistic strain for each atom
+    foreach (Atom *atom, atoms)
+    {
+        atom->calcStrain(pot[2]);
+    }
+*/
+
+
+
+
+    //draw bonds
+    for(int i = 0; i < natopt; i++)
+    {
+        for(int j = (i+1); j < natopt; j++)
+        {
+            QPointF vec1 = atoms[i]->pos();
+            QPointF vec2 = atoms[j]->pos();
+
+            qreal tsq = qPow(vec1.x()-vec2.x(),2) + qPow(vec1.y()-vec2.y(),2);
+            qreal bdist = qSqrt(tsq);
+            if(bdist < 120.0)
+            {
+                scene->addItem(new Highlight(atoms[i], atoms[j]));
+            }
+        }
+    }
+
     qDebug() << nfold;
+    scene->update();
 }
 
 

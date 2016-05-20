@@ -16,6 +16,7 @@ class QGraphicsSceneMouseEvent;
 QT_END_NAMESPACE
 
 class Bond;
+class Highlight;
 class MainWindow;
 
 class Atom : public QGraphicsItem
@@ -24,10 +25,14 @@ public:
     Atom(const QColor &color, MainWindow *mainWindow);
 
     void addBond(Bond *bond); //add bond
+    void addHighlight(Highlight *highlight); //add highlight
     QList<Bond *> bonds() const;
+    QList<Highlight *> highlights() const;
 
     void removeBond(Bond *bond);
+    void removeHighlight(Highlight *highlight);
     void removeBonds(); //remove bonds after atom deletion
+    void removeHighlights(); //remove highlights after atom deletion
 
     void changeColor(QColor &color); //change the atom color
 
@@ -59,6 +64,7 @@ private:
     QColor color; //atom color
     QVector<QPointF> stuff;
     QList<Bond *> bondList; //list of bonds for atom
+    QList<Highlight *> highlightList; //list of bonds for atom
     QPointF newPos; //new position after optimisation step
     MainWindow *graph;
     QVector<int> nlist; //list of nearest neighbours

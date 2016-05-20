@@ -6,14 +6,16 @@ HEADERS += mainwindow.h atom.h \
     sdialog.h \
     tdialog.h \
     rdialog.h \
-    pdialog.h
+    pdialog.h \
+    hlight.h
 SOURCES += main.cpp \
     bond.cpp \
     cdialog.cpp \
     sdialog.cpp \
     tdialog.cpp \
     rdialog.cpp \
-    pdialog.cpp
+    pdialog.cpp \
+    hlight.cpp
 SOURCES += mainwindow.cpp atom.cpp
 
 QT += widgets

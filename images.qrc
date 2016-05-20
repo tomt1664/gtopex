@@ -30,5 +30,6 @@
         <file>icons/p5_48.png</file>
         <file>icons/p4_48.png</file>
         <file>icons/p3_48.png</file>
+        <file>icons/logo.png</file>
     </qresource>
 </RCC>

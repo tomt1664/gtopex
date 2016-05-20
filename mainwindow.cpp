@@ -256,6 +256,11 @@ MainWindow::MainWindow(QWidget *parent)
     apot.append(500.00);
     step = 0.005;
     nstep = 20;
+
+    //show startup logo
+    QPixmap logo(":/icons/logo.png");
+    scene->addPixmap(logo);
+
 }
 
 void MainWindow::itemMoved()

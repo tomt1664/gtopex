@@ -154,6 +154,30 @@ void Atom::getnlist(QVector<float>& potin,QVector<float>& apotin)
     nlist.append(nn3);
 }
 
+//function to return the number of nearest neighbours and their indexes
+void Atom::nnlist(QVector<int>& nlst,int& num)
+{
+    nlst.clear();
+    int atcnt = 0;
+    foreach (QGraphicsItem *item, scene()->items()) {
+        Atom *atom = qgraphicsitem_cast<Atom *>(item);
+        if (!atom)
+            continue;
+        QPointF vec = mapToItem(atom, 0, 0);
+        qreal dx = vec.x();
+        qreal dy = vec.y();
+        qreal r = qSqrt(dx * dx + dy * dy);
+
+        if(r > 1.00 && r < 180)
+        {
+            nlst.append(atcnt);
+        }
+        atcnt++;
+    }
+    nlst = nlst;
+    num = nlst.size();
+}
+
 //function to calculate the total force on the atom (from the three nearest neighbours)
 //employs a morse potential and sp2 harmonic bond angle potential
 void Atom::atomForces(float step)

@@ -167,11 +167,6 @@ MainWindow::MainWindow(QWidget *parent)
     paramButton->setIconSize(iconSize);
     paramButton->setToolTip("Optimisation settings");
 
-    chartButton = new QToolButton;
-    chartButton->setIcon(QIcon(QPixmap(":/icons/graph_32.png")));
-    chartButton->setIconSize(iconSize);
-    chartButton->setToolTip("System analysis");
-
     colorButton = new QToolButton;
     colorButton->setIcon(QIcon(QPixmap(":/icons/color_32.png")));
     colorButton->setIconSize(iconSize);
@@ -201,7 +196,6 @@ MainWindow::MainWindow(QWidget *parent)
     labelLayout->addWidget(runButton);
     labelLayout->addWidget(strainButton);
     labelLayout->addWidget(ringsButton);
-    labelLayout->addWidget(chartButton);
     labelLayout->addWidget(paramButton);
     labelLayout->addWidget(infoButton);
 
@@ -257,10 +251,47 @@ MainWindow::MainWindow(QWidget *parent)
     step = 0.005;
     nstep = 20;
 
-    //show startup logo
-    QPixmap logo(":/icons/logo.png");
-    scene->addPixmap(logo);
+    //draw startup logo
 
+    QGraphicsTextItem* text1  = new QGraphicsTextItem("GTopEx");
+    QGraphicsTextItem* text2 = new QGraphicsTextItem("Graphene Topology Explorer");
+
+    QFont bigfont;
+    bigfont.setPointSize(82);
+    QFont smallfont;
+    smallfont.setPointSize(32);
+
+    text1->setFont(bigfont);
+    text2->setFont(smallfont);
+
+    text1->setDefaultTextColor(Qt::darkGray);
+    text2->setDefaultTextColor(Qt::darkGray);
+
+    text1->setPos(40,-135);
+    text2->setPos(-150,116);
+
+    scene->addItem(text1);
+    scene->addItem(text2);
+
+    QColor color(215,215,215,255);
+    Atom *atom1 = new Atom(color,this);
+    atom1->setPos(QPointF(0.0, 0.0));
+    scene->addItem(atom1);
+    Atom *atom2 = new Atom(color,this);
+    atom2->setPos(QPointF(0.0, -140.0));
+    scene->addItem(atom2);
+    Atom *atom3 = new Atom(color,this);
+    atom3->setPos(QPointF(121.0, 70.0));
+    scene->addItem(atom3);
+    Atom *atom4 = new Atom(color,this);
+    atom4->setPos(QPointF(-121.0, 70.0));
+    scene->addItem(atom4);
+
+
+    scene->addItem(new Bond(atom1, atom2));
+    scene->addItem(new Bond(atom1, atom3));
+    scene->addItem(new Bond(atom1, atom4));
+//    scene->setSceneRect(-250,-250,770,500);
 }
 
 void MainWindow::itemMoved()
@@ -831,17 +862,142 @@ void MainWindow::plotrings(int nfold)
         }
     }
 
-
-
-
-/*
-    //set nearest neighbour list for each atom object
+    //get the nearest neighbour list for each atom object
     natopt = 0;
+    int num = 0;
+    numbonds = 0;
+    QVector<int> bondl1; //list of all bonds
+    QVector<int> bondl2;
+    QVector<int> nlist;
     foreach (Atom *atom, atoms)
     {
-        atom->getnlist(pot,apot);
+        atom->nnlist(nlist, num);
+        for(int ib = 0; ib < num; ib++)
+        {
+            if(nlist[ib] > natopt-1)
+            {
+                numbonds++;
+                bondl1.push_back(natopt);
+                bondl2.push_back(nlist[ib]);
+            }
+        }
         natopt++;
     }
+
+    //get the 3 bond (angle) list
+    QVector<int> n31;
+    QVector<int> n32;
+    QVector<int> n33;
+    int nn3 = 0;
+    for(int nb = 0; nb < numbonds; nb++)
+    {
+        for(int nb2 = nb + 1; nb2 < numbonds; nb2++)
+        {
+            if(bondl1[nb] == bondl1[nb2])
+            {
+                nn3++;
+                n31.push_back(bondl2[nb]);
+                n32.push_back(bondl1[nb]);
+                n33.push_back(bondl2[nb2]);
+            } else if(bondl2[nb] == bondl1[nb2])
+            {
+                nn3++;
+                n31.push_back(bondl1[nb]);
+                n32.push_back(bondl2[nb]);
+                n33.push_back(bondl2[nb2]);
+            } else if(bondl2[nb] == bondl2[nb2])
+            {
+                nn3++;
+                n31.push_back(bondl1[nb]);
+                n32.push_back(bondl2[nb]);
+                n33.push_back(bondl1[nb2]);
+            } else if(bondl1[nb] == bondl2[nb2])
+            {
+                nn3++;
+                n31.push_back(bondl2[nb]);
+                n32.push_back(bondl1[nb]);
+                n33.push_back(bondl1[nb2]);
+            }
+        }
+    }
+
+    //get the 4 bond (torsion list)
+    QVector<int> n41;
+    QVector<int> n42;
+    QVector<int> n43;
+    QVector<int> n44;
+    int nn4 = 0;
+    for(int na = 0; na < nn3; na++)
+    {
+        for(int na2 = na + 1; na2 < nn3; na2++)
+        {
+            if(n32[na] == n31[na2] && n33[na] == n32[na2])
+            {
+                nn4++;
+                n41.push_back(n31[na]);
+                n42.push_back(n32[na]);
+                n43.push_back(n33[na]);
+                n44.push_back(n33[na2]);
+            } else if(n31[na] == n32[na2] && n32[na] == n33[na2])
+            {
+                nn4++;
+                n41.push_back(n31[na2]);
+                n42.push_back(n31[na]);
+                n43.push_back(n32[na]);
+                n44.push_back(n33[na]);
+            } else if(n32[na] == n33[na2] && n33[na] == n32[na2])
+            {
+                nn4++;
+                n41.push_back(n31[na]);
+                n42.push_back(n32[na]);
+                n43.push_back(n33[na]);
+                n44.push_back(n31[na2]);
+            } else if(n31[na] == n32[na2] && n32[na] == n31[na2])
+            {
+                nn4++;
+                n41.push_back(n33[na2]);
+                n42.push_back(n32[na2]);
+                n43.push_back(n31[na2]);
+                n44.push_back(n33[na]);
+            } else if(n32[na] == n31[na2] && n31[na] == n32[na2])
+            {
+                nn4++;
+                n41.push_back(n33[na2]);
+                n42.push_back(n31[na]);
+                n43.push_back(n32[na]);
+                n44.push_back(n33[na]);
+            } else if(n33[na] == n32[na2] && n32[na] == n33[na2])
+            {
+                nn4++;
+                n41.push_back(n31[na2]);
+                n42.push_back(n33[na]);
+                n43.push_back(n32[na]);
+                n44.push_back(n31[na]);
+            } else if(n32[na] == n33[na2] && n31[na] == n32[na2])
+            {
+                nn4++;
+                n41.push_back(n31[na2]);
+                n42.push_back(n33[na]);
+                n43.push_back(n32[na]);
+                n44.push_back(n31[na]);
+            } else if(n33[na] == n32[na2] && n32[na] == n31[na2])
+            {
+                nn4++;
+                n41.push_back(n33[na]);
+                n42.push_back(n32[na]);
+                n43.push_back(n31[na]);
+                n44.push_back(n33[na2]);
+            }
+        }
+    }
+
+
+
+
+    qDebug() << "n3 " << nn3;
+    qDebug() << "n4 " << nn4;
+
+    /*
 
     //calculate the atomistic strain for each atom
     foreach (Atom *atom, atoms)
@@ -873,13 +1029,6 @@ void MainWindow::plotrings(int nfold)
     qDebug() << nfold;
     scene->update();
 }
-
-
-void MainWindow::drawcharts()
-{
-
-}
-
 
 
 

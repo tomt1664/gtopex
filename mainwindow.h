@@ -52,7 +52,6 @@ private slots:
     void runSystem();
     void settings();
     void dostrain();
-    void drawcharts();
     void setcolor();
     void findrings();
     void plotrings(int nfold);
@@ -60,6 +59,7 @@ private slots:
 private:
     void populateScene();
 
+    int numbonds;
     QVector<float> xatmpos; //atom positions
     QVector<float> yatmpos;
     QList<Atom *> atoms; //list of all current atom objects
@@ -91,7 +91,6 @@ private:
     QToolButton *strainButton;
     QToolButton *runButton;
     QToolButton *paramButton;
-    QToolButton *chartButton;
     QToolButton *colorButton;
     QToolButton *ringsButton;
     QSlider *zoomSlider;

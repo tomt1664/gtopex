@@ -39,6 +39,8 @@ public:
     void getnlist(QVector<float>& potin,QVector<float>& apotin); //determine the neighbour list for the atom and initialise potentials
     void atomForces(float step); //calculate total force on atom due to neighbours and integrate translation
 
+    void nnlist(QVector<int>& nlst,int& num); //return the number of nearest neighbours and their indexes
+
     //atomistic strain calculation
     void calcStrain(float bondl);
     double getStrain() { return m_strain; }

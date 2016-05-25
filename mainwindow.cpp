@@ -499,7 +499,8 @@ void MainWindow::deleteatom()
 void MainWindow::slotAbout()
 {
     QMessageBox::about(this, tr("About "),
-            tr("<p><b>GTopEx version 0.65</b></p>"
+            tr("<p><b>GTopEx version 0.68</b></p>"
+               "<br> "
                "<p>Build date: %1"
                "<br> "
                "<br>This program is built using Qt 5.6"
@@ -847,10 +848,21 @@ void MainWindow::findrings()
 
     ringdialog->exec();
 
+    //clear current highlighting
+    foreach (QGraphicsItem *item, scene->items())
+    {
+        if (item->type() == Highlight::Type) {
+            scene->removeItem(item);
+            delete item;
+        }
+    }
+
 }
 
+//scan system connectivity and highlight selected nfold rings
 void MainWindow::plotrings(int nfold)
 {
+
     //get atom list
     int natopt = 0;
     QList<Atom *> atoms;
@@ -991,45 +1003,118 @@ void MainWindow::plotrings(int nfold)
         }
     }
 
-
-
-
-    qDebug() << "n3 " << nn3;
-    qDebug() << "n4 " << nn4;
-
-    /*
-
-    //calculate the atomistic strain for each atom
-    foreach (Atom *atom, atoms)
+    //highlight triangles
+    if(nfold == 3)
     {
-        atom->calcStrain(pot[2]);
-    }
-*/
-
-
-
-
-    //draw bonds
-    for(int i = 0; i < natopt; i++)
-    {
-        for(int j = (i+1); j < natopt; j++)
+        int ntri = 0;
+        QVector<int> tri1;
+        QVector<int> tri2;
+        QVector<int> tri3;
+        for(int nt = 0; nt < nn4; nt++)
         {
-            QPointF vec1 = atoms[i]->pos();
-            QPointF vec2 = atoms[j]->pos();
-
-            qreal tsq = qPow(vec1.x()-vec2.x(),2) + qPow(vec1.y()-vec2.y(),2);
-            qreal bdist = qSqrt(tsq);
-            if(bdist < 120.0)
+            if(n41[nt] == n44[nt])
             {
-                scene->addItem(new Highlight(atoms[i], atoms[j]));
+                ntri++;
+                tri1.push_back(n41[nt]);
+                tri2.push_back(n42[nt]);
+                tri3.push_back(n43[nt]);
             }
+        }
+        qDebug() << "n tri " << ntri;
+
+        for(int nt = 0; nt < ntri; nt++)
+        {
+            scene->addItem(new Highlight(atoms[tri1[nt]]->pos(), atoms[tri2[nt]]->pos(),0));
+            scene->addItem(new Highlight(atoms[tri2[nt]]->pos(), atoms[tri3[nt]]->pos(),0));
+            scene->addItem(new Highlight(atoms[tri3[nt]]->pos(), atoms[tri1[nt]]->pos(),0));
         }
     }
 
-    qDebug() << nfold;
+    //highlight squares
+    if(nfold == 4)
+    {
+        int nsqr = 0;
+        QVector<int> sqr1;
+        QVector<int> sqr2;
+        QVector<int> sqr3;
+        QVector<int> sqr4;
+        for(int ns = 0; ns < nn3; ns++)
+        {
+            for(int ns2 = ns + 1; ns2 < nn3; ns2++)
+            {
+                if(n31[ns] == n31[ns2] && n33[ns] == n33[ns2])
+                {
+                    nsqr++;
+                    sqr1.push_back(n31[ns]);
+                    sqr2.push_back(n32[ns]);
+                    sqr3.push_back(n33[ns]);
+                    sqr4.push_back(n32[ns2]);
+                } else if(n31[ns] == n33[ns2] && n33[ns] == n31[ns2])
+                {
+                    nsqr++;
+                    sqr1.push_back(n31[ns]);
+                    sqr2.push_back(n32[ns]);
+                    sqr3.push_back(n33[ns]);
+                    sqr4.push_back(n32[ns2]);
+                }
+            }
+        }
+        qDebug() << "n sqr " << nsqr;
+
+        for(int ns = 0; ns < nsqr; ns++)
+        {
+            scene->addItem(new Highlight(atoms[sqr1[ns]]->pos(), atoms[sqr2[ns]]->pos(),1));
+            scene->addItem(new Highlight(atoms[sqr2[ns]]->pos(), atoms[sqr3[ns]]->pos(),1));
+            scene->addItem(new Highlight(atoms[sqr3[ns]]->pos(), atoms[sqr4[ns]]->pos(),1));
+            scene->addItem(new Highlight(atoms[sqr4[ns]]->pos(), atoms[sqr1[ns]]->pos(),1));
+        }
+    }
+
+    //highlight pentagons
+    if(nfold == 5)
+    {
+        int npen = 0;
+        QVector<int> pen1;
+        QVector<int> pen2;
+        QVector<int> pen3;
+        QVector<int> pen4;
+        QVector<int> pen5;
+        for(int nt = 0; nt < nn4; nt++)
+        {
+            for(int na = 0; na < nn3; na++)
+            {
+                if(n41[nt] == n31[na] && n44[nt] == n33[na] && n42[nt] != n32[na] && n43[nt] != n32[na])
+                {
+                    npen++;
+                    pen1.push_back(n41[nt]);
+                    pen2.push_back(n42[nt]);
+                    pen3.push_back(n43[nt]);
+                    pen4.push_back(n44[nt]);
+                    pen5.push_back(n32[na]);
+                } else if(n44[nt] == n31[na] && n41[nt] == n33[na] && n42[nt] != n32[na] && n43[nt] != n32[na])
+                {
+                    npen++;
+                    pen1.push_back(n41[nt]);
+                    pen2.push_back(n42[nt]);
+                    pen3.push_back(n43[nt]);
+                    pen4.push_back(n44[nt]);
+                    pen5.push_back(n32[na]);
+                }
+            }
+        }
+
+        for(int np = 0; np < npen; np++)
+        {
+            scene->addItem(new Highlight(atoms[pen1[np]]->pos(), atoms[pen2[np]]->pos(),2));
+            scene->addItem(new Highlight(atoms[pen2[np]]->pos(), atoms[pen3[np]]->pos(),2));
+            scene->addItem(new Highlight(atoms[pen3[np]]->pos(), atoms[pen4[np]]->pos(),2));
+            scene->addItem(new Highlight(atoms[pen4[np]]->pos(), atoms[pen5[np]]->pos(),2));
+            scene->addItem(new Highlight(atoms[pen5[np]]->pos(), atoms[pen1[np]]->pos(),2));
+        }
+    }
+
     scene->update();
 }
-
 
 
 void MainWindow::zoomIn(int level)

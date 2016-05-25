@@ -10,19 +10,15 @@
 
 #include <QGraphicsItem>
 
-class Atom;
-
+// class to draw bond highlights and show polygons
 class Highlight : public QGraphicsItem
 {
 public:
-    Highlight(Atom *sourceAtom, Atom *destAtom); //highlight constructor
-
-    Atom *sourceAtom() const; //return bond atoms
-    Atom *destAtom() const;
+    Highlight(QPointF sPoint, QPointF dPoint, int col); //highlight constructor
 
     void adjust();
 
-    enum { Type = UserType + 2 };
+    enum { Type = UserType + 3 };
     int type() const Q_DECL_OVERRIDE { return Type; }
 
 protected:
@@ -30,10 +26,10 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) Q_DECL_OVERRIDE;
 
 private:
-    Atom *source, *dest;
 
     QPointF sourcePoint;
     QPointF destPoint;
+    int m_col; //the highlight color (0 = yellow, 1 = blue, 2 = red)
 };
 
 #endif // HLIGHT_H

@@ -33,20 +33,9 @@ void Atom::addBond(Bond *bond)
     bond->adjust();
 }
 
-void Atom::addHighlight(Highlight *highlight)
-{
-    highlightList << highlight;
-    highlight->adjust();
-}
-
 QList<Bond *> Atom::bonds() const
 {
     return bondList;
-}
-
-QList<Highlight *> Atom::highlights() const
-{
-    return highlightList;
 }
 
 //remove bond from bondlist
@@ -58,15 +47,6 @@ void Atom::removeBond(Bond *bond)
         bondList.removeAt(index);
 }
 
-//remove highlight from highlightlist
-void Atom::removeHighlight(Highlight *highlight)
-{
-    int index = highlightList.indexOf(highlight);
-
-    if (index != -1)
-        highlightList.removeAt(index);
-}
-
 //remove bond from scene
 void Atom::removeBonds()
 {
@@ -75,17 +55,6 @@ void Atom::removeBonds()
         bond->destAtom()->removeBond(bond);
         scene()->removeItem(bond);
         delete bond;
-    }
-}
-
-//remove highlight from scene
-void Atom::removeHighlights()
-{
-    foreach (Highlight *highlight, highlightList) {
-        highlight->sourceAtom()->removeHighlight(highlight);
-        highlight->destAtom()->removeHighlight(highlight);
-        scene()->removeItem(highlight);
-        delete highlight;
     }
 }
 

@@ -6,56 +6,23 @@
 ****************************************************************************/
 
 #include "hlight.h"
-#include "atom.h"
 
 #include <math.h>
 
 #include <QPainter>
 
-Highlight::Highlight(Atom *sourceAtom, Atom *destAtom)
+Highlight::Highlight(QPointF sPoint, QPointF dPoint, int col)
 {
-    setZValue(-20);
+    setZValue(10); //draw on top
+    setOpacity(0.3); //make semi-transparent
     setAcceptedMouseButtons(0);
-    source = sourceAtom;
-    dest = destAtom;
-    source->addHighlight(this);
-    dest->addHighlight(this);
-    adjust();
-}
-
-Atom *Highlight::sourceAtom() const
-{
-    return source;
-}
-
-Atom *Highlight::destAtom() const
-{
-    return dest;
-}
-
-void Highlight::adjust()
-{
-    if (!source || !dest)
-        return;
-
-    QLineF line(mapFromItem(source, 0, 0), mapFromItem(dest, 0, 0));
-    qreal length = line.length();
-
-    prepareGeometryChange();
-
-    if (length > qreal(20.) && length < qreal(190.0)) {
-        sourcePoint = line.p1();
-        destPoint = line.p2();
-    } else {
-        sourcePoint = destPoint = line.p1();
-    }
+    sourcePoint = sPoint;
+    destPoint = dPoint;
+    m_col = col;
 }
 
 QRectF Highlight::boundingRect() const
 {
-    if (!source || !dest)
-        return QRectF();
-
     qreal penWidth = 1;
     qreal extra = (penWidth) / 2.0;
 
@@ -67,15 +34,22 @@ QRectF Highlight::boundingRect() const
 
 void Highlight::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-    if (!source || !dest)
-        return;
 
     QLineF line(sourcePoint, destPoint);
     if (qFuzzyCompare(line.length(), qreal(0.)))
         return;
 
     // Draw the line itself
-    painter->setPen(QPen(Qt::blue, 12, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    if(m_col == 0)
+    {
+        painter->setPen(QPen(Qt::yellow, 16, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    } else if(m_col == 1)
+    {
+        painter->setPen(QPen(Qt::blue, 16, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    } else
+    {
+        painter->setPen(QPen(Qt::red, 16, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    }
     painter->drawLine(line);
 
 }

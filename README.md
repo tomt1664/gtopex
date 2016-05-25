@@ -1,7 +1,7 @@
 # gtopex
 Graphene Topology Explorer
 
-A graphical tool for creating and manipulating 2D sp2 bonded structures, and for visualising and analysing strain and connectivity. 
+A graphical tool for creating and manipulating 2D sp<sup>2</sup> bonded structures, and for visualising and analysing strain and connectivity. 
 
 Key features include:
 

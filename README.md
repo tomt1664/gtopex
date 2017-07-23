@@ -8,10 +8,9 @@ Key features include:
 - Import and export xyz format files
 - Create custom graphene lattice structures
 - Translate and rotate selected atoms
-- Interactive structure relaxation with reactive force-field
+- Interactive structure relaxation using a 2D reactive force-field
 - Colour coding of atomic volumes to visualise strain fields
 - Highlighting of ring structures
 
-Built using C++ and Qt5.6.  
+Built using C++ and Qt 5.6.  
 
-For documentation, see the wiki. 

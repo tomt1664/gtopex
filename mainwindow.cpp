@@ -36,7 +36,7 @@
 #include <QtWidgets>
 #include <qmath.h>
 
-
+//main window
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent), timerId(0)
 {
@@ -74,7 +74,7 @@ MainWindow::MainWindow(QWidget *parent)
     zoomSlider->setMaximum(500);
     zoomSlider->setValue(250);
 
-    // Zoom slide bar
+    // zoom control
     QVBoxLayout *zoomslideLayout = new QVBoxLayout;
     zoomslideLayout->addWidget(zoominButton);
     zoomslideLayout->addWidget(zoomSlider);
@@ -92,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent)
     rotateSlider->setMaximum(360);
     rotateSlider->setValue(0);
 
-    // Rotate slide bar
+    // rotate control
     QHBoxLayout *rotateslideLayout = new QHBoxLayout;
     rotateslideLayout->addWidget(rotateleftButton);
     rotateslideLayout->addWidget(rotateSlider);
@@ -103,7 +103,7 @@ MainWindow::MainWindow(QWidget *parent)
     resetButton->setIconSize(iconSize);
     resetButton->setEnabled(false);
 
-    // Label layout
+    // pointer settings
     QHBoxLayout *labelLayout = new QHBoxLayout;
     selectMButton = new QToolButton;
     selectMButton->setIcon(QIcon(QPixmap(":/icons/point_32.png")));
